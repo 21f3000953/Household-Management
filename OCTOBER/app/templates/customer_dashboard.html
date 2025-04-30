@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Customer Dashboard - Urban Company
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Welcome to Your Customer Dashboard</h1>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Book a Service</h5>
+                    <p class="card-text">Browse and book services from our wide range of offerings.</p>
+                    <a href="{{ url_for('list_services') }}" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Your Bookings</h5>
+                    <p class="card-text">View and manage your current and past service bookings.</p>
+                    <a href="{{ url_for('customer_current_bookings') }}" class="btn btn-secondary">View Current Bookings</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Settings</h5>
+                    <p class="card-text">View and update your personal information and preferences.</p>
+                    <a href="{{ url_for('customer_profile') }}" class="btn btn-info">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <h2 class="mt-4">Completed Services - Pending Review</h2>
+            {% if unrated_requests %}
+                <ul class="list-group">
+                    {% for request in unrated_requests %}
+                    <li class="list-group-item">
+                        <h5>{{ request.service.service_name }}</h5>
+                        <p>Date: {{ request.request_datetime.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <a href="{{ url_for('rate_service', request_id=request.id) }}" class="btn btn-primary btn-sm">Rate this service</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No pending reviews at the moment.</p>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <h2 class="mt-4">Rated Services</h2>
+            {% if rated_requests %}
+                <ul class="list-group">
+                    {% for request in rated_requests %}
+                    <li class="list-group-item">
+                        <h5>{{ request.service.service_name }}</h5>
+                        <p>Date: {{ request.request_datetime.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p>Your rating: {{ request.review.rating }}/5</p>
+                        <p>{{ request.review.comment }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No rated services yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

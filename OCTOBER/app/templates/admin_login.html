@@ -1,0 +1,173 @@
+{% extends 'layout.html' %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block style %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a237e 0%, #121858 100%);
+        min-height: 100vh;
+    }
+
+    .admin-login-container {
+        max-width: 450px;
+        margin: 3rem auto;
+        padding: 2.5rem;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .admin-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        position: relative;
+    }
+
+    .admin-icon {
+        background: #1a237e;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+    }
+
+    .admin-icon i {
+        color: white;
+        font-size: 2rem;
+    }
+
+    .admin-header h2 {
+        color: #1a237e;
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+
+    .form-control:focus {
+        border-color: #1a237e;
+        box-shadow: 0 0 0 0.2rem rgba(26, 35, 126, 0.15);
+        background-color: white;
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        background-color: #1a237e;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
+    }
+
+    .btn-primary:hover {
+        background-color: #151b60;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(26, 35, 126, 0.3);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .security-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .security-badge i {
+        margin-right: 0.5rem;
+        color: #28a745;
+    }
+
+    @media (max-width: 576px) {
+        .admin-login-container {
+            margin: 2rem 1rem;
+            padding: 2rem 1.5rem;
+        }
+
+        .admin-header h2 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-login-container">
+        <div class="admin-header">
+            <div class="admin-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2>Admin Login</h2>
+        </div>
+
+        <form method="POST">
+            <div class="input-group">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" required 
+                       placeholder="Enter admin username">
+                <i class="fas fa-user"></i>
+            </div>
+            
+            <div class="input-group">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required 
+                       placeholder="Enter admin password">
+                <i class="fas fa-lock"></i>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt me-2"></i> Secure Login
+            </button>
+        </form>
+
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure Admin Portal</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

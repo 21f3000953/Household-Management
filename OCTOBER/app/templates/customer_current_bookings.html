@@ -1,0 +1,170 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Your Current Bookings - Urban Company
+{% endblock %}
+
+{% block style %}
+<style>
+    .booking-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+    }
+
+    .booking-header {
+        background-color: #f8f9fa;
+        padding: 12px 15px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .booking-body {
+        padding: 20px;
+    }
+
+    .booking-footer {
+        padding: 12px 15px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .status-accepted {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-cancelled {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .professional-info {
+        border-left: 4px solid #4a90e2;
+        padding-left: 15px;
+        margin-top: 15px;
+    }
+
+    .booking-card p {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .booking-card strong {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    .alert {
+        border-radius: 6px;
+        padding: 12px 15px;
+        margin-bottom: 0;
+    }
+
+    .alert-info {
+        background-color: #f0f7ff;
+        border-color: #cce5ff;
+        color: #004085;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Your Current Bookings</h1>
+
+    {% if active_requests %}
+        {% for request in active_requests %}
+            <div class="booking-card">
+                <div class="booking-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Booking #{{ request.id }}</h5>
+                    <span class="status-badge status-{{ request.status }}">{{ request.status.capitalize() }}</span>
+                </div>
+                <div class="booking-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Service:</strong> {{ request.service.service_name }}</p>
+                            <p><strong>Date/Time:</strong> {{ request.request_datetime.strftime('%Y-%m-%d %H:%M') if request.request_datetime else 'Not scheduled' }}</p>
+                            <p><strong>Location:</strong> {{ request.location or 'Not specified' }}</p>
+                            <p><strong>Remarks:</strong> {{ request.remarks or 'None' }}</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            {% if request.status == 'accepted' %}
+                                <div class="professional-info">
+                                    <h6 class="mb-3">Your Professional</h6>
+                                    {% with professional=request.professional %}
+                                        {% include 'components/professional_card_small.html' %}
+                                    {% endwith %}
+                                </div>
+                            {% elif request.status == 'pending' and request.request_group_id %}
+                                <div class="alert alert-info">
+                                    <p><i class="fas fa-info-circle"></i> Your request has been sent to multiple professionals. The first one to accept will be assigned to you.</p>
+                                </div>
+                            {% elif request.status == 'pending' %}
+                                <div class="alert alert-info">
+                                    <p><i class="fas fa-info-circle"></i> Waiting for the professional to accept your request.</p>
+                                </div>
+                            {% elif request.status == 'cancelled' %}
+                                <div class="alert alert-warning">
+                                    <p><i class="fas fa-exclamation-triangle"></i> This request has been cancelled.</p>
+                                    {% if request.request_group_id %}
+                                        <p><small>Note: This request was part of a group request.</small></p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-footer">
+                    {% if request.status != 'closed' and request.status != 'cancelled' %}
+                    <form action="{{ url_for('close_service_request', request_id=request.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                            Cancel Booking
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <p>You don't have any active bookings at the moment.</p>
+        </div>
+    {% endif %}
+
+    <a href="{{ url_for('customer_dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

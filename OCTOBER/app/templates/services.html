@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Available Services - Urban Company
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Available Services</h1>
+    
+    <form class="mb-4" method="GET" action="{{ url_for('list_services') }}">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="search" placeholder="Search by service name" value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="pin_code" placeholder="Search by PIN code" value="{{ search_pin }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+    {% if no_services_found %}
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Sorry!</h4>
+        <p>This service is unavailable in your area. Please try searching for a different service or PIN code.</p>
+        {% if search_query or search_pin %}
+        <hr>
+        <p class="mb-0">
+            You searched for:
+            {% if search_query %}<strong>Service:</strong> {{ search_query }}{% endif %}
+            {% if search_pin %}<strong>PIN Code:</strong> {{ search_pin }}{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="row">
+        {% for service in services %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.service_name }}</h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <p><strong>Base Price:</strong> ${{ service.base_price }}</p>
+                    <p><strong>Time Required:</strong> {{ service.time_required }} minutes</p>
+                    <p><strong>PIN Code:</strong> {{ service.pin_code }}</p>
+                    <div class="text-center">
+                        <a href="{{ url_for('book_service', service_id=service.id) }}" class="btn btn-primary">Book Now</a>
+                    </div>
+                    <!-- <form action="{{ url_for('open_service_request', service_id=service.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-success">Open Request</button>
+                    </form> -->
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

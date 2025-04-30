@@ -1,0 +1,166 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Book Service - Urban Company
+{% endblock %}
+
+{% block style %}
+<style>
+    .professional-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .professional-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .professional-card.selected {
+        border-color: #4a90e2;
+        background-color: #f8f9ff;
+    }
+
+    .professional-selection {
+        display: none;
+    }
+
+    .professional-selection.show {
+        display: block;
+    }
+
+    .request-type-selector {
+        margin-bottom: 2rem;
+    }
+
+    .request-type-selector .btn {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .request-type-selector .btn:hover {
+        transform: translateY(-3px);
+    }
+
+    .request-type-selector .btn-outline-primary:hover {
+        background-color: #4a90e2;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Book Service: {{ service.service_name }}</h1>
+
+    <div class="request-type-selector text-center mb-4">
+        <h4 class="mb-3">How would you like to request this service?</h4>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary" id="all-professionals-btn">
+                Send to All Professionals
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="specific-professional-btn">
+                Choose a Specific Professional
+            </button>
+        </div>
+    </div>
+
+    <form method="POST" id="booking-form">
+        <input type="hidden" id="request_type" name="request_type" value="">
+
+        <div id="specific-professional-selection" class="professional-selection mb-4">
+            <h4 class="mb-3">Select a Professional:</h4>
+            <div class="row">
+                {% for professional in professionals %}
+                    {% if professional.verified %}
+                        <div class="col-md-6">
+                            {% include 'components/professional_card.html' %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <input type="hidden" id="professional_id" name="professional_id" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="request_datetime" class="form-label">Date and Time:</label>
+            <input type="datetime-local" class="form-control" id="request_datetime" name="request_datetime" required>
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location:</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+        </div>
+        <div class="mb-3">
+            <label for="pin_code" class="form-label">PIN Code:</label>
+            <input type="text" class="form-control" id="pin_code" name="pin_code" required>
+        </div>
+        <div class="mb-3">
+            <label for="remarks" class="form-label">Remarks:</label>
+            <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg w-100">Book Service</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const allProfessionalsBtn = document.getElementById('all-professionals-btn');
+    const specificProfessionalBtn = document.getElementById('specific-professional-btn');
+    const specificProfessionalSelection = document.getElementById('specific-professional-selection');
+    const requestTypeInput = document.getElementById('request_type');
+    const professionalIdInput = document.getElementById('professional_id');
+    const professionalCards = document.querySelectorAll('.professional-card');
+    const bookingForm = document.getElementById('booking-form');
+
+    // Set default request type
+    requestTypeInput.value = 'all';
+    allProfessionalsBtn.classList.add('active');
+
+    // Handle request type selection
+    allProfessionalsBtn.addEventListener('click', function() {
+        requestTypeInput.value = 'all';
+        specificProfessionalSelection.classList.remove('show');
+        allProfessionalsBtn.classList.add('active');
+        specificProfessionalBtn.classList.remove('active');
+        professionalIdInput.removeAttribute('required');
+    });
+
+    specificProfessionalBtn.addEventListener('click', function() {
+        requestTypeInput.value = 'specific';
+        specificProfessionalSelection.classList.add('show');
+        specificProfessionalBtn.classList.add('active');
+        allProfessionalsBtn.classList.remove('active');
+        professionalIdInput.setAttribute('required', 'required');
+    });
+
+    // Handle professional card selection
+    professionalCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selected class from all cards
+            professionalCards.forEach(c => c.classList.remove('selected'));
+
+            // Add selected class to clicked card
+            card.classList.add('selected');
+
+            // Set the professional ID in the hidden input
+            const professionalId = card.getAttribute('data-professional-id');
+            professionalIdInput.value = professionalId;
+        });
+    });
+
+    // Form validation
+    bookingForm.addEventListener('submit', function(e) {
+        if (requestTypeInput.value === 'specific' && !professionalIdInput.value) {
+            e.preventDefault();
+            alert('Please select a professional');
+        }
+    });
+});
+</script>
+{% endblock %}

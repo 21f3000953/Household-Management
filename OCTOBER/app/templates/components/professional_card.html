@@ -1,0 +1,32 @@
+<div class="professional-card card mb-3 {% if selected %}selected{% endif %}" data-professional-id="{{ professional.id }}">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 text-center">
+                {% if professional.profile_photo %}
+                    <img src="{{ url_for('static', filename='uploads/profile_photos/' + professional.profile_photo) }}" 
+                         class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;" 
+                         alt="Profile Photo">
+                {% else %}
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 100px; height: 100px; color: white; font-size: 2rem;">
+                        {{ professional.user.username[0].upper() }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-9">
+                <h5 class="card-title">{{ professional.user.username }}</h5>
+                <p class="mb-1"><strong>Experience:</strong> {{ professional.experience }} years</p>
+                <p class="mb-1"><strong>Rating:</strong> 
+                    <span class="text-warning">
+                        {% for _ in range(professional.average_rating|int) %}★{% endfor %}
+                        {% for _ in range(5 - professional.average_rating|int) %}☆{% endfor %}
+                    </span>
+                    ({{ "%.1f"|format(professional.average_rating) }}/5.0)
+                </p>
+                {% if professional.verified %}
+                    <span class="badge bg-success">Verified Professional</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

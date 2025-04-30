@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Customers</h5>
+                    <p class="card-text">View and manage customer accounts.</p>
+                    <a href="{{ url_for('manage_customers') }}" class="btn btn-primary">Manage Customers</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Service Professionals</h5>
+                    <p class="card-text">Approve and manage service professional accounts.</p>
+                    <a href="{{ url_for('manage_professionals') }}" class="btn btn-primary">Manage Professionals</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Services</h5>
+                    <p class="card-text">Create, update, and delete services.</p>
+                    <a href="{{ url_for('manage_services') }}" class="btn btn-primary">Manage Services</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

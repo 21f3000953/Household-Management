@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage Service Professionals{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Manage Service Professionals</h1>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" action="{{ url_for('manage_professionals') }}" class="form-inline">
+                <div class="input-group w-100">
+                    <input type="text" 
+                           name="search" 
+                           class="form-control" 
+                           placeholder="Search by username or email..."
+                           value="{{ request.args.get('search', '') }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        {% if request.args.get('search') %}
+                            <a href="{{ url_for('manage_professionals') }}" class="btn btn-secondary">Clear</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if professionals %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Verified</th>
+                <th>Status</th>
+                <th>Document</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for professional in professionals %}
+            <tr>
+                <td>{{ professional.user.username }}</td>
+                <td>{{ professional.user.email }}</td>
+                <td>{% if professional.verified %}Yes{% else %}No{% endif %}</td>
+                <td>{% if professional.user.is_active %}Active{% else %}Blocked{% endif %}</td>
+                <td>
+                    {% if professional.document %}
+                        <a href="{{ url_for('view_document', professional_id=professional.id) }}" class="btn btn-info btn-sm">View</a>
+                        <a href="{{ url_for('download_document', professional_id=professional.id) }}" class="btn btn-secondary btn-sm">Download</a>
+                    {% else %}
+                        <span class="text-muted">No document</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not professional.verified %}
+                    <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success btn-sm">Approve</a>
+                    {% endif %}
+                    {% if professional.user.is_active %}
+                    <a href="{{ url_for('block_user', id=professional.user.id) }}" class="btn btn-danger btn-sm">Block</a>
+                    {% else %}
+                    <a href="{{ url_for('block_user', id=professional.user.id) }}" class="btn btn-success btn-sm">Unblock</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">
+        No service professionals found{% if request.args.get('search') %} matching your search{% endif %}.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

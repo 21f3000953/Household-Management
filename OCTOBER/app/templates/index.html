@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Urban Company
+{% endblock %}
+
+{% block style %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .hero-container {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 3rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #4a90e2, #28a745, #4a90e2);
+        background-size: 200% 100%;
+        animation: gradient-shift 3s ease infinite;
+    }
+
+    @keyframes gradient-shift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .welcome-title {
+        color: #2c3e50;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-text {
+        font-size: 1.25rem;
+        color: #505968;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .auth-links {
+        margin-top: 2rem;
+    }
+
+    .auth-links a {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        margin: 0 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .login-link {
+        background-color: #4a90e2;
+        color: white;
+    }
+
+    .signup-link {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .login-link:hover, .signup-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: white;
+    }
+
+    .login-link:hover {
+        background-color: #357abd;
+    }
+
+    .signup-link:hover {
+        background-color: #218838;
+    }
+
+    .welcome-user {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .user-avatar {
+        width: 100px;
+        height: 100px;
+        background: #4a90e2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .hero-container {
+            margin: 2rem auto;
+            padding: 2rem 1rem;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+        }
+
+        .auth-links a {
+            display: block;
+            margin: 1rem auto;
+            max-width: 200px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero-container">
+        {% if user %}
+            <div class="welcome-user">
+                <div class="user-avatar">
+                    {{ user.username[0].upper() }}
+                </div>
+                <h1 class="welcome-title">Welcome, {{ user.username }}!</h1>
+            </div>
+        {% else %}
+            <h1 class="welcome-title">Welcome to Urban Company</h1>
+            <p class="welcome-text">Please login or sign up to continue.</p>
+            <div class="auth-links">
+                <a href="{{ url_for('login') }}" class="login-link">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-link">Sign Up</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

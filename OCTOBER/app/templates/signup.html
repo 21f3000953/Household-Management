@@ -1,0 +1,221 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Signup - Household Application
+{% endblock %}
+
+{% block style %}
+<style>
+    .signup-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .signup-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .signup-header h1 {
+        color: #2c3e50;
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .signup-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    }
+
+    .form-control-file {
+        padding: 10px;
+        border: 2px dashed #e9ecef;
+        border-radius: 8px;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .btn-primary {
+        background-color: #4a90e2;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #357abd;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+        background-color: #93c4f5;
+    }
+
+    .form-text {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    /* Animation for service selection */
+    #service-selection, #document-upload, #profile-photo-upload {
+        transition: all 0.3s ease;
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    #service-selection.show, #document-upload.show, #profile-photo-upload.show {
+        opacity: 1;
+        height: auto;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Create Account</h1>
+            <p>Join our community of home service professionals and customers</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('signup') }}" enctype="multipart/form-data" id="signupForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required
+                       placeholder="Choose a username">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" required
+                       placeholder="Enter your email">
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required
+                       placeholder="Create a strong password">
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label">I want to...</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="">Select your role</option>
+                    <option value="customer">Customer</option>
+                    <option value="service_professional">Service Professional</option>
+                </select>
+            </div>
+
+            <div class="mb-3" id="service-selection">
+                <label for="service" class="form-label">Services</label>
+                <select class="form-select" id="service" name="service">
+                    <option value="">Select your service category</option>
+                    {% for service in services %}
+                    <option value="{{ service.id }}">{{ service.service_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3" id="document-upload">
+                <label for="document" class="form-label">Professional Certifications</label>
+                <input type="file" class="form-control-file" id="document" name="document"
+                       accept=".pdf,.doc,.docx">
+                <small class="form-text">Upload your certifications or relevant documents (PDF, DOC, or DOCX)</small>
+            </div>
+
+            <div class="mb-3" id="profile-photo-upload">
+                <label for="profile_photo" class="form-label">Profile Photo</label>
+                <input type="file" class="form-control-file" id="profile_photo" name="profile_photo"
+                       accept=".jpg,.jpeg,.png">
+                <small class="form-text">Upload a professional profile photo (JPG, JPEG, or PNG)</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                Create Account
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(e) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating your account...';
+    });
+
+    function toggleServiceSelection() {
+        const role = document.getElementById('role').value;
+        const serviceSelection = document.getElementById('service-selection');
+        const documentUpload = document.getElementById('document-upload');
+        const profilePhotoUpload = document.getElementById('profile-photo-upload');
+        const serviceInput = document.getElementById('service');
+        const documentInput = document.getElementById('document');
+        const profilePhotoInput = document.getElementById('profile_photo');
+
+        if (role === 'service_professional') {
+            serviceSelection.classList.add('show');
+            documentUpload.classList.add('show');
+            profilePhotoUpload.classList.add('show');
+            serviceInput.required = true;
+            documentInput.required = true;
+            profilePhotoInput.required = true;
+        } else {
+            serviceSelection.classList.remove('show');
+            documentUpload.classList.remove('show');
+            profilePhotoUpload.classList.remove('show');
+            serviceInput.required = false;
+            documentInput.required = false;
+            profilePhotoInput.required = false;
+        }
+    }
+
+    document.getElementById('role').addEventListener('change', toggleServiceSelection);
+});
+</script>
+{% endblock %}

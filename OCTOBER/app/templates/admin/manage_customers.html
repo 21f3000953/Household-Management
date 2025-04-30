@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage Customers{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Manage Customers</h1>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form action="{{ url_for('manage_customers') }}" method="GET" class="d-flex">
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="form-control me-2" 
+                    placeholder="Search by username or email"
+                    value="{{ search_query }}"
+                >
+                <button type="submit" class="btn btn-primary">Search</button>
+                {% if search_query %}
+                    <a href="{{ url_for('manage_customers') }}" class="btn btn-secondary ms-2">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Count -->
+    {% if search_query %}
+    <p class="text-muted">
+        Found {{ customers|length }} result(s) for "{{ search_query }}"
+    </p>
+    {% endif %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.username }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{% if customer.is_active %}Active{% else %}Blocked{% endif %}</td>
+                <td>
+                    {% if customer.is_active %}
+                    <a href="{{ url_for('block_user', id=customer.id) }}" class="btn btn-danger btn-sm">Block</a>
+                    {% else %}
+                    <a href="{{ url_for('block_user', id=customer.id) }}" class="btn btn-success btn-sm">Unblock</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if not customers %}
+    <div class="alert alert-info">
+        {% if search_query %}
+            No customers found matching your search.
+        {% else %}
+            No customers found in the system.
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
